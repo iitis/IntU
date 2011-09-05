@@ -61,7 +61,6 @@ kLambda[partition_]:=Block[{t},
 (*
  Returns conjugate partition  
 *)
-
 ConjugatePartition[part_] := Block[{CountPositive, conj, f},
 	CountPositive[x_] := Length[Select[x, # > 0 &]];
     conj = {};
@@ -69,27 +68,6 @@ ConjugatePartition[part_] := Block[{CountPositive, conj, f},
     Nest[f, part, part[[1]]];
     (*return*)
     conj
-];
-
-
-MultinomialBeta[a_]:=(Times@@(Gamma/@a))/(Gamma[Total[a]])
-
-PositiveIntegerQ[x_]:=And[IntegerQ[x], x> 0]
-NotPositiveIntegerQ[x_]:=Not[PositiveIntegerQ[x]]
-
-
-
-(* ::Subsection:: *)
-(*Weingarten function and function related to*)
-
-(* 
- From \cite[Proposition 4.62]{etingof2009introduction}
-*)
-SchurPolynomialAt1[partt_,dim_]:=Block[{part,zeros},
-    zeros = ConstantArray[0, dim-Length[partt]];
-    part = Join[partt,zeros];
-    (*return*)
-    Product[(part[[i]] - part[[j]] + j - i)/(j - i),{j, 1, dim},{i, 1, j-1}]
 ];
 
 (*
@@ -101,13 +79,32 @@ PermutationTypePartition[perm_?PermutationListQ]:=Block[{s},
     Join[s,ConstantArray[1,Length[perm]-Total[s]]]
 ];
 
-
 (*
  Binary representation of a given partition 
 *)
 BinaryPartition[partition_]:=Block[{l={}},
-	Flatten[Map[Append[l,Flatten[{ConstantArray[1,#],0}]]&,Differences[Prepend[Reverse[partition],0]]]]
+    Flatten[Map[Append[l,Flatten[{ConstantArray[1,#],0}]]&,Differences[Prepend[Reverse[partition],0]]]]
 ];
+
+(* 
+ From \cite[Proposition 4.62]{etingof2009introduction}
+*)
+SchurPolynomialAt1[partt_,dim_]:=Block[{part,zeros},
+    zeros = ConstantArray[0, dim-Length[partt]];
+    part = Join[partt,zeros];
+    (*return*)
+    Product[(part[[i]] - part[[j]] + j - i)/(j - i),{j, 1, dim},{i, 1, j-1}]
+];
+
+MultinomialBeta[a_]:=(Times@@(Gamma/@a))/(Gamma[Total[a]]);
+
+PositiveIntegerQ[x_]:=And[IntegerQ[x], x> 0]
+NotPositiveIntegerQ[x_]:=Not[PositiveIntegerQ[x]]
+
+
+
+(* ::Subsection:: *)
+(*Weingarten function and function related to*)
 
 
 (*
@@ -159,7 +156,7 @@ CharacterSymmetricGroup[partition_, type_:"id"]:= If[type==="id", CharacterAtId[
 (*
  Function from \cite{collins06integration}
 *)
-Weingarten[permutationType_,d_]:=(
+Weingarten[permutationType_,d__?PositiveIntegerQ]:=(
  Unprotect[Weingarten];
  Weingarten[permutationType,d]=Block[{func,n},    
     func = (CharacterSymmetricGroup[#])^2 CharacterSymmetricGroup[#,permutationType]/SchurPolynomialAt1[#,d]& ;
@@ -209,7 +206,7 @@ GetPermutations[Idx1_, Idx2_]:=(*GetPermutations[Idx1, Idx2]=*)Block[{sIdx1, sId
  Inegral for given indices - see \cite[Eqn. 11]{collins06integration}
 *)
 IntegrateUnitaryHaarIndices[{I1_,J1_,I2_,J2_}, dim_?PositiveIntegerQ]:=(
-If[Sort[I1] == Sort[I2] && Sort[J1] == Sort[J2], 
+If[Sort[I1] == Sort[I2] && Sort[J1] == Sort[J2] && Length[I1]==Length[J1], 
  Unprotect[IntegrateUnitaryHaarIndices];
  IntegrateUnitaryHaarIndices[{I1,J1,I2,J2}, dim]=
  Block[{pIinv,pJ,s, int, perm, type},
@@ -235,48 +232,44 @@ If[DEBUG, Print["OPT 1"];];
         Block[{tallyI1, tallyI2, tallyJ1, tallyJ2,ks},
             tallyI1 = Tally[I1]; tallyI2 = Tally[I2]; tallyJ1 = Tally[J1]; tallyJ2 = Tally[J2];        
             If[Length[tallyI1]==1 && Length[tallyI2]==1,    
-                If[Length[I1] == Length[I2] && Length[J1] == Length[J2],      
-                    If[I1[[1]] == I2[[1]] && Sort[J1]==Sort[J2],
-                        ks=Join[tallyJ1\[Transpose][[2]],ConstantArray[0,dim - Length[tallyJ1]]];
+                If[I1[[1]] == I2[[1]],
+                    ks=Join[tallyJ1\[Transpose][[2]],ConstantArray[0,dim - Length[tallyJ1]]];
 If[DEBUG, Print["OPT 2"];];
-                        int = (dim-1)! MultinomialBeta[ks + 1];     
-                    , (*else*)
-                        int = 0;
-                    ];      
+                    int = (dim-1)! MultinomialBeta[ks + 1];     
+                , (*else*)
+                    int = 0;
                 ];
             ];
             (*similarly for exchanging indices*) 
             If[int===Null && Length[tallyJ1]==1 && Length[tallyJ2]==1,
-                If[Length[I1] == Length[I2] && Length[J1] == Length[J2],
-                    If[J1[[1]] == J2[[1]] && Sort[I1]==Sort[I2],
-                        ks=Join[tallyI1\[Transpose][[2]],ConstantArray[0,dim - Length[tallyI1]]];   
+                If[J1[[1]] == J2[[1]],
+                    ks=Join[tallyI1\[Transpose][[2]],ConstantArray[0,dim - Length[tallyI1]]];   
 If[DEBUG, Print["OPT 2"];];    
-                        int = (dim-1)! MultinomialBeta[ks + 1];
-                    , (*else*)
-                        int = 0;
-                    ];
+                    int = (dim-1)! MultinomialBeta[ks + 1];
+                , (*else*)
+                    int = 0;
                 ];
             ];
         ];  (*end Block*)
         ];  (*end if int === Null*)
         (*new optimization *)   
-        If[int === Null && I1==I2 && J1==J2 && Length[I1]==Length[J1] && Length[I1]>1,
+        If[int === Null && I1==I2 && J1==J2 && Length[I1]>1,
            Block[{test,tI},
                 test = True;
                 Do[test = test&& (If[I1[[k]]==I1[[l]],J1[[k]]==J1[[l]],True]);If[Not[test],Break[]],{k,1,Length[I1]},{l,1,Length[I1]}];
                 If[test,
 If[DEBUG, Print["OPT 3"];];
                     Block[{JoinAndMultiply,PartitionsWithConjSize,partitions,sumsOfPartitions,sum},
-                    (*temp functions*)
-                    JoinAndMultiply[x_,y_]:={Sort[Join[x[[1]],y[[1]]],Greater], x[[2]]*y[[2]]};
-                    JoinAndMultiply[x_,y_,z__]:=JoinAndMultiply[JoinAndMultiply[x,y],z];
-                    PartitionsWithConjSize[n_]:=Block[{ip},ip= IntegerPartitions[n]; Map[{#,kLambda[#]}&,ip]];
-                    (*end temp functions*)
-                    tI=Tally[I1];
-                    partitions=Map[PartitionsWithConjSize,(tI\[Transpose][[2]])];
-                    sumsOfPartitions= Map[Sort[#,Greater]&,Flatten[Apply[Outer[JoinAndMultiply, ##,1]&,partitions],Length[partitions]-1]];
-                    sum =Sum[sumsOfPartitions[[i]][[2]]*Weingarten[sumsOfPartitions[[i]][[1]],dim],{i,1,Length[sumsOfPartitions]}];
-                    int = Fold[#1*#2!&,1,tI\[Transpose][[2]]]*sum;         
+                        (*temp functions*)
+                        JoinAndMultiply[x_,y_]:={Sort[Join[x[[1]],y[[1]]],Greater], x[[2]]*y[[2]]};
+	                    JoinAndMultiply[x_,y_,z__]:=JoinAndMultiply[JoinAndMultiply[x,y],z];
+	                    PartitionsWithConjSize[n_]:=Block[{ip}, ip=IntegerPartitions[n]; Map[{#,kLambda[#]}&,ip]];
+	                    (*end temp functions*)
+	                    tI=Tally[I1];
+	                    partitions=Map[PartitionsWithConjSize,(tI\[Transpose][[2]])];
+	                    sumsOfPartitions= Map[Sort[#,Greater]&,Flatten[Apply[Outer[JoinAndMultiply, ##,1]&,partitions],Length[partitions]-1]];
+	                    sum =Sum[sumsOfPartitions[[i]][[2]]*Weingarten[sumsOfPartitions[[i]][[1]],dim],{i,1,Length[sumsOfPartitions]}];
+	                    int = Fold[#1*#2!&,1,tI\[Transpose][[2]]]*sum;         
                     ];
                 ];
             ];
@@ -287,7 +280,7 @@ If[DEBUG, Print["OPT 3"];];
     ]; (*end if OPT *)
 
  If[int === Null, 
- If[Length[I1]>0 && Length[I1]==Length[I2] && Length[J1]==Length[J2] && Length[I1]==Length[J1],  
+ If[Length[I1]>0,  
     pIinv = GetPermutations[I2,I1];
     pJ    = GetPermutations[J1,J2];     
     int = Sum[ 
