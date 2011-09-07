@@ -341,6 +341,30 @@ IndexExtractor[w_]:=Block[{fw,con,ccon, rest, I1, I2, J1,J2},
 (*
 Function normalizes indices, so that only first positive numbers are used
 *)
+NormIdx[i1_, j1_, i2_, j2_] := 
+  Block[{Is1, Js1, Is2, Js2, symbI1, restSymbI, symbJ1, restSymbJ, k, 
+    symbolChange, symbolChangeJ, IIs1, IIs2, JJs1, JJs2}, {Is1, Js1} =
+     Sort[{i1, j1}\[Transpose]]\[Transpose];
+   {Is2, Js2} = Sort[{i2, j2}\[Transpose]]\[Transpose];
+   symbI1 = Union[Is1];
+   restSymbI = Complement[Is2, symbI1];
+   symbJ1 = DeleteDuplicates[Js1];
+   restSymbJ = Complement[Js2, symbJ1];
+   k = 0; 
+   symbolChange = 
+    Join[Table[k++; symbI1[[i]] -> k, {i, 1, Length[symbI1]}], 
+     Table[k++; restSymbI[[i]] -> k, {i, 1, Length[restSymbI]}]];
+   k = 0;
+   symbolChangeJ = 
+    Join[Table[k++; symbJ1[[i]] -> k, {i, 1, Length[symbJ1]}], 
+     Table[k++; restSymbJ[[i]] -> k, {i, 1, Length[restSymbJ]}]];
+   IIs1 = Is1 /. symbolChange;
+   IIs2 = Is2 /. symbolChange;
+   JJs1 = Js1 /. symbolChangeJ;
+   JJs2 = Js2 /. symbolChangeJ;
+   (*return*){IIs1, JJs1, IIs2, JJs2}
+];
+(*
 NormIdx[i1_,j1_,i2_,j2_]:=Block[{Is1,Js1,Is2,Js2, symbI1, restSymb,k,symbolChange},
     {Is1,Js1}=Sort[{i1,j1}\[Transpose]]\[Transpose];
     {Is2,Js2}=Sort[{i2,j2}\[Transpose]]\[Transpose];
@@ -350,6 +374,7 @@ NormIdx[i1_,j1_,i2_,j2_]:=Block[{Is1,Js1,Is2,Js2, symbI1, restSymb,k,symbolChang
     (*return*)  
     {Is1,Js1,Is2,Js2}/.symbolChange
 ];
+*)
 
 (*
 Integrating function - this function calls multiple times IntU 
