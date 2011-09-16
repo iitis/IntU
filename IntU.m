@@ -16,8 +16,11 @@ citeCollins06 = DOIToString["[Collins&\:015aniady 2006]","10.1007/s00220-006-155
 citeBernstein04 = DOIToString["[Bernstein 2004]","10.1016/j.jsc.2003.11.001"];
 IntUDocumentationReaplcements = {"<v>" -> "\!\(\*StyleBox[\"" , "</v>" -> "\", \"TI\"]\)", "<f>"->"\!\(\*StyleBox[\"", "</f>" -> "\", \"Input\"]\)"} 
 
+
+
 (* ::Section:: *)
 (*Help messages*)
+
 
 IntegrateUnitaryHaar::usage = StringReplace[
 "<f>IntegrateUnitaryHaar</f>[<v>integrand</v>,{<v>var</v>,<v>dim</v>}] \
@@ -26,7 +29,7 @@ gives the definite integral on unitary group with respect to Haar, accepting the
 can contain any other symbolic expression of other variables,
 -<v>var</v> - symbol of variable for integration,   
 -<v>dim</v> - the dimension of a unitary group, must be a positive integer.
-IntegrateUnitaryHaar[<v>f</v>,{<v>u</v>,<v>d1</v>},{<v>v</v>,<v>d2</v>} ...] \
+<f>IntegrateUnitaryHaar</f>[<v>f</v>,{<v>u</v>,<v>d1</v>},{<v>v</v>,<v>d2</v>} ...] \
 gives multiple integral."
 ,IntUDocumentationReaplcements]
 
@@ -63,7 +66,7 @@ PermutationTypePartition::usage = StringReplace[
 ,IntUDocumentationReaplcements]
 
 MultinomialBeta::usage = StringReplace[
-"<f>MultinomialBeta</f>[<v>p</v>] - gives for <v>d</v>-dimensional vector of non negative numbers <v>p_1, p_2, ... , p_d</v> \
+"<f>MultinomialBeta</f>[<v>p</v>] - gives for <v>d</v>-dimensional vector of non negative numbers <v>\!\(\*SubscriptBox[\(p\), \(1\)]\), \!\(\*SubscriptBox[\(p\), \(2\)]\), ... , \!\(\*SubscriptBox[\(p\), \(d\)]\)</v> \
 the value of multinomial Beta function defined as \
 \!\(\*FractionBox[\(\(\[Product]\[CapitalGamma] \((\*SubscriptBox[\(p\), \(i\)])\)\)\(\\\\n\)\), \(\[CapitalGamma] \((\[Sum]\*SubscriptBox[\(p\), \(i\)])\)\)]\)."
 ,IntUDocumentationReaplcements]
@@ -83,6 +86,8 @@ This function is needed for the implementation of <v>MNInner</v> algorithm in fu
 ConjugatePartition::usage=StringReplace[
 "<f>ConjugatePartition</f>[<v>part</v>] -  gives a conjugate of a partition <v>part</v>."
 ,IntUDocumentationReaplcements]
+
+
 
 (* ::Section:: *)
 (*Private definitions*)
@@ -115,6 +120,7 @@ intuAbout = " ... ";
 
 (* ::Subsection:: *)
 (*Helper functions*)
+
 
 (*
  Returns the size of conjugancy class for permutation with cycle type given by partition in a group Subscript[S, n],

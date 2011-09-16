@@ -1,0 +1,445 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     16110,        436]
+NotebookOptionsPosition[     12509,        317]
+NotebookOutlinePosition[     14308,        371]
+CellTagsIndexPosition[     14141,        364]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"<<", "IntU`"}]], "Input",
+ CellChangeTimes->{{3.525155461204999*^9, 3.525155462709264*^9}, {
+   3.525155502062302*^9, 3.5251555037570267`*^9}, 3.525156482251186*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Package IntU version \"\>", 
+   "\[InvisibleSpace]", "\<\"0.1.25\"\>", 
+   "\[InvisibleSpace]", "\<\" (last modification: \"\>", 
+   "\[InvisibleSpace]", "\<\"14/09/2011\"\>", 
+   "\[InvisibleSpace]", "\<\").\"\>"}],
+  SequenceForm[
+  "Package IntU version ", "0.1.25", " (last modification: ", "14/09/2011", 
+   ")."],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.525155504653678*^9, 3.5251558690824623`*^9, 
+  3.525155941626357*^9, 3.52515629776397*^9, 3.525156482251408*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Main functionality", "Section",
+ CellChangeTimes->{{3.525155542115457*^9, 3.5251555470683527`*^9}, 
+   3.525156482251485*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "IntegrateUnitaryHaar"}]], "Input",
+ CellChangeTimes->{{3.525155505598089*^9, 3.525155509822176*^9}, 
+   3.525156482251627*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"IntegrateUnitaryHaar\\\", \\\"Input\\\"]\)[\
+\!\(\*StyleBox[\\\"integrand\\\", \\\"TI\\\"]\),{\!\(\*StyleBox[\\\"var\\\", \
+\\\"TI\\\"]\),\!\(\*StyleBox[\\\"dim\\\", \\\"TI\\\"]\)}] gives the definite \
+integral on unitary group with respect to Haar, accepting the following \
+arguments: \\n-\!\(\*StyleBox[\\\"integrand\\\", \\\"TI\\\"]\) - polynomial \
+type expression of variable \!\(\*StyleBox[\\\"var\\\", \\\"TI\\\"]\) with \
+indices placed as subscripts, can contain any other symbolic expression of \
+other variables,\\n-\!\(\*StyleBox[\\\"var\\\", \\\"TI\\\"]\) - symbol of \
+variable for integration,   \\n-\!\(\*StyleBox[\\\"dim\\\", \\\"TI\\\"]\) - \
+the dimension of a unitary group, must be a positive \
+integer.\\n\!\(\*StyleBox[\\\"IntegrateUnitaryHaar\\\", \\\"Input\\\"]\)[\!\(\
+\*StyleBox[\\\"f\\\", \\\"TI\\\"]\),{\!\(\*StyleBox[\\\"u\\\", \\\"TI\\\"]\),\
+\!\(\*StyleBox[\\\"d1\\\", \\\"TI\\\"]\)},{\!\(\*StyleBox[\\\"v\\\", \\\"TI\\\
+\"]\),\!\(\*StyleBox[\\\"d2\\\", \\\"TI\\\"]\)} ...] gives multiple integral.\
+\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.5251562980318613`*^9, 3.525156482252058*^9},
+ CellTags->"Info3525163497-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "IntegrateUnitaryHaarIndices"}]], "Input",
+ CellChangeTimes->{{3.525155520484371*^9, 3.525155525092753*^9}, 
+   3.525156482252186*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"IntegrateUnitaryHaarIndices\\\", \
+\\\"Input\\\"]\){\!\(\*StyleBox[\\\"I1\\\", \
+\\\"TI\\\"]\),\!\(\*StyleBox[\\\"J1\\\", \
+\\\"TI\\\"]\),\!\(\*StyleBox[\\\"I2\\\", \
+\\\"TI\\\"]\),\!\(\*StyleBox[\\\"J2\\\", \
+\\\"TI\\\"]\)},\!\(\*StyleBox[\\\"dim\\\", \\\"TI\\\"]\)] gives an the \
+definite integral on unitary group with respect to Haar for given indices. \
+see \!\(\*ButtonBox[StyleBox[\\\"[Collins&\:015aniady 2006]\\\", \
+\\\"SR\\\"],Active->True,BaseStyle->\\\"Link\\\",ButtonData->\\\"http://dx.\
+doi.org/10.1007/s00220-006-1554-3\\\"]\).\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.525156298215858*^9, 3.525156482252489*^9},
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Weingarten function", "Section",
+ CellChangeTimes->{{3.525155555195322*^9, 3.525155559699605*^9}, 
+   3.525156482252569*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "Weingarten"}]], "Input",
+ CellChangeTimes->{{3.525155561697381*^9, 3.5251555648327312`*^9}, 
+   3.525156482252692*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"Weingarten\\\", \
+\\\"Input\\\"]\)[\!\(\*StyleBox[\\\"type\\\", \\\"TI\\\"]\),\!\(\*StyleBox[\\\
+\"dim\\\", \\\"TI\\\"]\)] - returns the value of \
+\!\(\*StyleBox[\\\"Weingarten\\\", \\\"TI\\\"]\) function defined in \
+\!\(\*ButtonBox[StyleBox[\\\"[Collins&\:015aniady 2006]\\\", \
+\\\"SR\\\"],Active->True,BaseStyle->\\\"Link\\\",ButtonData->\\\"http://dx.\
+doi.org/10.1007/s00220-006-1554-3\\\"]\) accepts the following \
+arguments\\n-\!\(\*StyleBox[\\\"type\\\", \\\"TI\\\"]\) - an integer \
+partition which corresponds to cycle type of \
+permutation,\\n-\!\(\*StyleBox[\\\"dim\\\", \\\"TI\\\"]\) - the dimension of \
+a unitary group, must be a positive integer.\"\>", "MSG"]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.525156298377326*^9, 3.525156482252995*^9},
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "CharacterSymmetricGroup"}]], "Input",
+ CellChangeTimes->{{3.5251555710128593`*^9, 3.5251555757169657`*^9}, 
+   3.525156482253117*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"CharacterSymmetricGroup\\\", \\\"Input\\\"]\
+\)[\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\),\!\(\*StyleBox[\\\"type\\\", \\\
+\"TI\\\"]\)] - gives the character of the symmetric group \
+\!\(\*SuperscriptBox[\(\[Chi]\), \(\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\)\
+\)]\)(\!\(\*StyleBox[\\\"type\\\", \\\"TI\\\"]\))\\nParameter \!\(\*StyleBox[\
+\\\"type\\\", \\\"TI\\\"]\) is optional. The default value is set to a \
+trivial partition and in this case the function returns the dimension of the \
+irreducible representation of symmetric group indexed by \
+\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\),\\nIf \!\(\*StyleBox[\\\"type\\\", \
+\\\"TI\\\"]\) is specified the value of the character is calculated by \
+Murnaghan-Nakayama rule using \!\(\*StyleBox[\\\"MNInner\\\", \\\"TI\\\"]\) \
+algorithm provided in \!\(\*ButtonBox[StyleBox[\\\"[Bernstein 2004]\\\", \
+\\\"SR\\\"],Active->True,BaseStyle->\\\"Link\\\",ButtonData->\\\"http://dx.\
+doi.org/10.1016/j.jsc.2003.11.001\\\"]\).\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.525156298538447*^9, 3.5251564822535152`*^9},
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "SchurPolynomialAt1"}]], "Input",
+ CellChangeTimes->{{3.525155595239581*^9, 3.525155609534189*^9}, 
+   3.5251564822536383`*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"SchurPolynomialAt1\\\", \\\"Input\\\"]\)[\!\
+\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\),\!\(\*StyleBox[\\\"dim\\\", \\\"TI\\\
+\"]\)] - returns the value of Schur polynomial \!\(\*SubscriptBox[\(s\), \(\!\
+\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\)\)]\) at \!\(\*StyleBox[\\\"d\\\", \\\
+\"TI\\\"]\)-dimensional point (1,1,...,1), i.e. the dimension of irreducible \
+representation of \!\(\*StyleBox[\\\"U\\\", \
+\\\"TI\\\"]\)(\!\(\*StyleBox[\\\"dim\\\", \\\"TI\\\"]\)) corresponding to \
+\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\).\"\>", "MSG"]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.5251562986986732`*^9, 3.525156482253913*^9},
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Helper functions", "Section",
+ CellChangeTimes->{{3.52515561660002*^9, 3.525155621123457*^9}, 
+   3.525156482253991*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "PermutationTypePartition"}]], "Input",
+ CellChangeTimes->{{3.525155625885117*^9, 3.5251556306635933`*^9}, 
+   3.525156482254114*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"PermutationTypePartition\\\", \
+\\\"Input\\\"]\)[\!\(\*StyleBox[\\\"perm\\\", \\\"TI\\\"]\)] - gives the \
+partition which represents the cycle type of the permutation \
+\!\(\*StyleBox[\\\"perm\\\", \\\"TI\\\"]\).\"\>", "MSG"]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.525156298863799*^9, 3.525156482254282*^9},
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "MultinomialBeta"}]], "Input",
+ CellChangeTimes->{{3.5251556342394543`*^9, 3.525155642223197*^9}, {
+   3.52515569699055*^9, 3.525155709529009*^9}, 3.525156482254401*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"MultinomialBeta\\\", \
+\\\"Input\\\"]\)[\!\(\*StyleBox[\\\"p\\\", \\\"TI\\\"]\)] - gives for \
+\!\(\*StyleBox[\\\"d\\\", \\\"TI\\\"]\)-dimensional vector of non negative \
+numbers \!\(\*StyleBox[\\\"\!\(\*SubscriptBox[\(p\), \(1\)]\), \
+\!\(\*SubscriptBox[\(p\), \(2\)]\), ... , \!\(\*SubscriptBox[\(p\), \
+\(d\)]\)\\\", \\\"TI\\\"]\) the value of multinomial Beta function defined as \
+\!\(\*FractionBox[\(\(\[Product]\[CapitalGamma] \((\*SubscriptBox[\(p\), \
+\(i\)])\)\)\(\\\\\\\\n\)\), \(\[CapitalGamma] \((\[Sum]\*SubscriptBox[\(p\), \
+\(i\)])\)\)]\).\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.525156299097117*^9, 3.5251564822547617`*^9},
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "ConjugatePartition"}]], "Input",
+ CellChangeTimes->{{3.5251556529641447`*^9, 3.525155654941957*^9}, 
+   3.525156482254884*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"ConjugatePartition\\\", \\\"Input\\\"]\)[\!\
+\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\)] -  gives a conjugate of a partition \
+\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\).\"\>", "MSG"]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.5251562992810707`*^9, 3.525156482255045*^9},
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "CardinalityConjugacyClassPartition"}]], "Input",
+ CellChangeTimes->{{3.525155892994734*^9, 3.525155897720673*^9}, 
+   3.525156482255163*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"CardinalityConjugacyClassPartition\\\", \
+\\\"Input\\\"]\)[\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\)] - gives a \
+cardinality of conjugacy class for permutation with cycle type given by \
+partition \!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\).\"\>", "MSG"]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.525156299461254*^9, 3.525156482255332*^9},
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "BinaryPartition"}]], "Input",
+ CellChangeTimes->{{3.525155906543461*^9, 3.5251559088155813`*^9}, 
+   3.525156482255447*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"\!\(\*StyleBox[\\\"BinaryPartition\\\", \
+\\\"Input\\\"]\)[\!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\)] - gives a binary \
+representation of a partition \!\(\*StyleBox[\\\"part\\\", \\\"TI\\\"]\). \
+This function is needed for the implementation of \
+\!\(\*StyleBox[\\\"MNInner\\\", \\\"TI\\\"]\) algorithm in function \
+\!\(\*StyleBox[\\\"CharacterSymmetricGroup\\\", \\\"Input\\\"]\).\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.52515629963815*^9, 3.525156482255727*^9},
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["References", "Section",
+ CellChangeTimes->{{3.5251568205209417`*^9, 3.525156822459036*^9}}],
+
+Cell[TextData[{
+ StyleBox["[Bernstein 2004]",
+  FontWeight->"Bold"],
+ " D. Bernstein, ",
+ StyleBox["The computational complexity of rules for the character table of ",
+  
+  FontSlant->"Italic"],
+ Cell[BoxData[
+  SubscriptBox["S", "n"]],
+  FormatType->"StandardForm",
+  FontSize->12],
+ ", Journal of Symbolic Computation, Volume 37, Issue 6 (2004), pp. 727-748."
+}], "Text",
+ CellChangeTimes->{{3.525156826714336*^9, 3.525156851395349*^9}, {
+  3.525156911485895*^9, 3.525156980572584*^9}, {3.5251571007730722`*^9, 
+  3.52515711670969*^9}},
+ FontFamily->"Bitstream Vera Sans"],
+
+Cell[TextData[{
+ StyleBox["[Collins & \:015aniady 2006]",
+  FontFamily->"Sans Serif",
+  FontWeight->"Bold"],
+ StyleBox[" B. Collins and P. \:015aniady, ",
+  FontFamily->"Sans Serif"],
+ StyleBox["Integration with Respect to the Haar Measure on Unitary, \
+Orthogonal and Symplectic Group",
+  FontFamily->"Sans Serif",
+  FontSlant->"Italic"],
+ StyleBox[", Communications in Mathematical Physics, Volume 264, Number 3 \
+(2006), pp. 773-795.",
+  FontFamily->"Sans Serif"]
+}], "Text",
+ CellChangeTimes->{{3.5251569967143517`*^9, 3.525157070973536*^9}, {
+  3.525157107286737*^9, 3.525157119493005*^9}, {3.525157271245864*^9, 
+  3.5251572718709183`*^9}, {3.525157649303252*^9, 3.5251576550223093`*^9}, {
+  3.525157716838025*^9, 3.525157735189527*^9}},
+ FontFamily->"Bitstream Vera Sans"]
+}, Open  ]]
+},
+WindowSize->{1918, 1123},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperOrientation"->"Portrait",
+"PaperSize"->{Automatic, Automatic},
+"PostScriptOutputFile"->"/home/jam/print.ps"},
+ShowSelection->True,
+CellLabelAutoDelete->True,
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (February 23, 2011)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[StyleDefinitions -> "Default.nb"]]}, Visible -> False, 
+  FrontEndVersion -> "8.0 for Linux x86 (64-bit) (February 23, 2011)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "Info3525163497-5865648"->{
+  Cell[1654, 55, 1223, 17, 119, "Print",
+   CellTags->"Info3525163497-5865648"]},
+ "Info3525163498-5865648"->{
+  Cell[3079, 82, 732, 12, 47, "Print",
+   CellTags->"Info3525163498-5865648"],
+  Cell[4165, 111, 854, 14, 86, "Print",
+   CellTags->"Info3525163498-5865648"],
+  Cell[5221, 135, 1166, 16, 86, "Print",
+   CellTags->"Info3525163498-5865648"],
+  Cell[6582, 161, 717, 11, 46, "Print",
+   CellTags->"Info3525163498-5865648"],
+  Cell[7663, 189, 402, 7, 43, "Print",
+   CellTags->"Info3525163498-5865648"]},
+ "Info3525163499-5865648"->{
+  Cell[8302, 206, 745, 11, 91, "Print",
+   CellTags->"Info3525163499-5865648"],
+  Cell[9242, 227, 359, 6, 43, "Print",
+   CellTags->"Info3525163499-5865648"],
+  Cell[9810, 243, 431, 7, 43, "Print",
+   CellTags->"Info3525163499-5865648"],
+  Cell[10433, 260, 555, 9, 43, "Print",
+   CellTags->"Info3525163499-5865648"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"Info3525163497-5865648", 13259, 338},
+ {"Info3525163498-5865648", 13370, 341},
+ {"Info3525163499-5865648", 13799, 352}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 189, 3, 30, "Input"],
+Cell[771, 27, 532, 12, 23, "Print"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1340, 44, 131, 2, 74, "Section"],
+Cell[CellGroupData[{
+Cell[1496, 50, 155, 3, 30, "Input"],
+Cell[1654, 55, 1223, 17, 119, "Print",
+ CellTags->"Info3525163497-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2914, 77, 162, 3, 30, "Input"],
+Cell[3079, 82, 732, 12, 47, "Print",
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3860, 100, 130, 2, 74, "Section"],
+Cell[CellGroupData[{
+Cell[4015, 106, 147, 3, 30, "Input"],
+Cell[4165, 111, 854, 14, 86, "Print",
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5056, 130, 162, 3, 30, "Input"],
+Cell[5221, 135, 1166, 16, 86, "Print",
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6424, 156, 155, 3, 30, "Input"],
+Cell[6582, 161, 717, 11, 46, "Print",
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7348, 178, 126, 2, 74, "Section"],
+Cell[CellGroupData[{
+Cell[7499, 184, 161, 3, 30, "Input"],
+Cell[7663, 189, 402, 7, 43, "Print",
+ CellTags->"Info3525163498-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8102, 201, 197, 3, 30, "Input"],
+Cell[8302, 206, 745, 11, 91, "Print",
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9084, 222, 155, 3, 30, "Input"],
+Cell[9242, 227, 359, 6, 43, "Print",
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9638, 238, 169, 3, 30, "Input"],
+Cell[9810, 243, 431, 7, 43, "Print",
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10278, 255, 152, 3, 30, "Input"],
+Cell[10433, 260, 555, 9, 43, "Print",
+ CellTags->"Info3525163499-5865648"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11037, 275, 97, 1, 74, "Section"],
+Cell[11137, 278, 574, 16, 30, "Text"],
+Cell[11714, 296, 779, 18, 31, "Text"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
