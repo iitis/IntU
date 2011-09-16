@@ -4,31 +4,96 @@ BeginPackage["IntU`"];
 Unprotect@@Names["IntU`*"]
 Clear@@Names["IntU`*"]
 
+(*Variable[text_?StringQ]:= "\!\(\*StyleBox[\""<>text<>"\", \"TI\"]\)"
+Variable[a_,b__]:=Variable[a]<>","<>Variable[b]
+ 
+Func[text_?StringQ]:= "\!\(\*StyleBox[\""<>text<>"\", \"Input\"]\)"
+Func[a_,b__]:=Func[a]<>","<>Func[b]
+*)
+
+DOIToString[text_,doi_]:="\!\(\*ButtonBox[StyleBox[\""<>text<>"\", \"SR\"],Active->True,BaseStyle->\"Link\",ButtonData->\"http://dx.doi.org/"<>doi<>"\"]\)";
+citeCollins06 = DOIToString["[Collins&\:015aniady 2006]","10.1007/s00220-006-1554-3"];
+citeBernstein04 = DOIToString["[Bernstein 2004]","10.1016/j.jsc.2003.11.001"];
+IntUDocumentationReaplcements = {"<v>" -> "\!\(\*StyleBox[\"" , "</v>" -> "\", \"TI\"]\)", "<f>"->"\!\(\*StyleBox[\"", "</f>" -> "\", \"Input\"]\)"} 
+
 (* ::Section:: *)
 (*Help messages*)
-IntegrateUnitaryHaar::usage = "Integration ......"
 
-Weingarten::usage = "Weingarten[type,d] for given cycle type of permutation positive integer and $d$ returns Weingarten function see Eqn. (\\ref{eqn:weingarten-type-definition}), for orginal definition see paper \\cite{collins06integration}"
+IntegrateUnitaryHaar::usage = StringReplace[
+"<f>IntegrateUnitaryHaar</f>[<v>integrand</v>,{<v>var</v>,<v>dim</v>}] \
+gives the definite integral on unitary group with respect to Haar, accepting the following arguments: 
+-<v>integrand</v> - polynomial type expression of variable <v>var</v> with indices placed as subscripts, \
+can contain any other symbolic expression of other variables,
+-<v>var</v> - symbol of variable for integration,   
+-<v>dim</v> - the dimension of a unitary group, must be a positive integer.
+IntegrateUnitaryHaar[<v>f</v>,{<v>u</v>,<v>d1</v>},{<v>v</v>,<v>d2</v>} ...] \
+gives multiple integral."
+,IntUDocumentationReaplcements]
 
-PermutationTypePartition::usage = "..."
+IntegrateUnitaryHaarIndices::usage = StringReplace[
+"<f>IntegrateUnitaryHaarIndices</f>{<v>I1</v>,<v>J1</v>,<v>I2</v>,<v>J2</v>},<v>dim</v>] \
+gives an the definite integral on unitary group with respect to Haar for given indices. see "<>citeCollins06<>"."
+,IntUDocumentationReaplcements]
 
-CharacterSymmetricGroup::usage = "..."
+Weingarten::usage = StringReplace[
+"<f>Weingarten</f>[<v>type</v>,<v>dim</v>] - returns the value of <v>Weingarten</v> function defined in \
+"<>citeCollins06<>" accepts the following arguments
+-<v>type</v> - an integer partition which corresponds to cycle type of permutation,
+-<v>dim</v> - the dimension of a unitary group, must be a positive integer."
+,IntUDocumentationReaplcements]
 
-MultinomialBeta::usage = "..."
+CharacterSymmetricGroup::usage =  StringReplace[
+"<f>CharacterSymmetricGroup</f>[<v>part</v>,<v>type</v>] - \
+gives the character of the symmetric group \!\(\*SuperscriptBox[\(\[Chi]\), \(<v>part</v>\)]\)(<v>type</v>)
+Parameter <v>type</v> is optional. The default value is set to a trivial \
+partition and in this case the function returns the dimension of the irreducible \
+representation of symmetric group indexed by <v>part</v>,
+If <v>type</v> is specified the value of the character is calculated by Murnaghan-Nakayama rule using \
+<v>MNInner</v> algorithm provided in "<>citeBernstein04<>"." 
+,IntUDocumentationReaplcements]
 
-IntegrateUnitaryHaarIndices::usage = "..."
+SchurPolynomialAt1::usage = StringReplace[ 
+"<f>SchurPolynomialAt1</f>[<v>part</v>,<v>dim</v>] - returns the value of Schur polynomial \!\(\*SubscriptBox[\(s\), \(<v>part</v>\)]\) \
+at <v>d</v>-dimensional point (1,1,...,1), i.e. the dimension of irreducible representation of <v>U</v>(<v>dim</v>) corresponding to <v>part</v>."
+,IntUDocumentationReaplcements]
 
-SchurPolynomialAt1::usage = "..."
+PermutationTypePartition::usage = StringReplace[
+"<f>PermutationTypePartition</f>[<v>perm</v>] - gives the partition which represents the cycle type of the permutation \
+<v>perm</v>."
+,IntUDocumentationReaplcements]
 
-PermutationTypePartition::usage = "..."
+MultinomialBeta::usage = StringReplace[
+"<f>MultinomialBeta</f>[<v>p</v>] - gives for <v>d</v>-dimensional vector of non negative numbers <v>p_1, p_2, ... , p_d</v> \
+the value of multinomial Beta function defined as \
+\!\(\*FractionBox[\(\(\[Product]\[CapitalGamma] \((\*SubscriptBox[\(p\), \(i\)])\)\)\(\\\\n\)\), \(\[CapitalGamma] \((\[Sum]\*SubscriptBox[\(p\), \(i\)])\)\)]\)."
+,IntUDocumentationReaplcements]
+   
+CardinalityConjugacyClassPartition::usage = StringReplace[
+"<f>CardinalityConjugacyClassPartition</f>[<v>part</v>] - gives a cardinality of conjugacy class for \
+permutation with cycle type given by partition <v>part</v>." 
+,IntUDocumentationReaplcements]
+
+
+BinaryPartition::usage = StringReplace[
+"<f>BinaryPartition</f>[<v>part</v>] - gives a binary representation of a partition <v>part</v>. \
+This function is needed for the implementation of <v>MNInner</v> algorithm in function <f>CharacterSymmetricGroup</f>."
+,IntUDocumentationReaplcements]
+
+
+ConjugatePartition::usage=StringReplace[
+"<f>ConjugatePartition</f>[<v>part</v>] -  gives a conjugate of a partition <v>part</v>."
+,IntUDocumentationReaplcements]
 
 (* ::Section:: *)
 (*Private definitions*)
+
 
 Begin["`Private`"];
 
 DEBUG = False;
 OPT = True;
+
+
 
 intuAuthors = "Zbigniew Puchala <z.puchala[at]iitis[dot]pl>, Jaroslaw Miszczak <miszczak[at]iitis[dot]pl>";
 intuLicense = "GPLv3 <http://www.gnu.org/licenses/gpl.html>";
@@ -39,11 +104,14 @@ intuHistory = {
     {"0.1.21", "01/08/2011", "Zbyszek", "Function for Integer partitions deleted - now build in function in use"},
     {"0.1.22", "12/08/2011", "Zbyszek", "Weingarten changed and other stuff"},
     {"0.1.23", "24/08/2011", "Zbyszek", "New optimization and some clean up"},
-    {"0.1.24", "26/08/2011", "Zbyszek", "Main function changed - now multiple integrals can be calculated"}
+    {"0.1.24", "26/08/2011", "Zbyszek", "Main function changed - now multiple integrals can be calculated"},
+    {"0.1.25", "14/09/2011", "Zbyszek", "Documentation improved"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
 intuAbout = " ... ";
+
+
 
 (* ::Subsection:: *)
 (*Helper functions*)
@@ -52,14 +120,14 @@ intuAbout = " ... ";
  Returns the size of conjugancy class for permutation with cycle type given by partition in a group Subscript[S, n],
  see \cite[Eqn.(1.2)]{sagan2001symmetric} 
 *)
-kLambda[partition_]:=Block[{t},
+CardinalityConjugacyClassPartition[partition_]:=Block[{t},
   t = Tally[partition];
   (*return*)
   Total[partition]! / (Product[ (t[[i]][[1]])^(t[[i]][[2]])(t[[i]][[2]])! ,{i,1,Length[t]} ])
 ]
 
 (*
- Returns conjugate partition  
+ Returns a conjugate partition  
 *)
 ConjugatePartition[part_] := Block[{CountPositive, conj, f},
 	CountPositive[x_] := Length[Select[x, # > 0 &]];
@@ -121,7 +189,7 @@ CharacterAtId[partition_]:=Block[{conjPart},
 *)
 
 (*
- Murnaghan-Nakayama algorithm for computing a character of symmetric group Subscript[S, n], algorithm from \cite{bernstein2004computational}
+ Murnaghan-Nakayama algorithm for computing a character of symmetric group Subscript[S, n], algorithm MNInner from \cite{bernstein2004computational}
 *)
 MurnaghanNakayama[Rr_,mm_,tt_:1]:= 
  MurnaghanNakayama[Rr,mm,tt]=Block[{BP,i,j,R=Rr,m=mm,t=tt,c=0,s=1,temp},
@@ -149,9 +217,7 @@ MurnaghanNakayama[Rr_,mm_,tt_:1]:=
   c
 ];
 
-
 CharacterSymmetricGroup[partition_, type_:"id"]:= If[type==="id", CharacterAtId[partition] ,(*else*) MurnaghanNakayama[BinaryPartition[partition], type]];
-
 
 (*
  Function from \cite{collins06integration}
@@ -168,8 +234,11 @@ Weingarten[permutationType_,d__?PositiveIntegerQ]:=(
  Weingarten[permutationType,d] 
 )
 
+
+
 (* ::Subsection:: *)
 (*Permutations*)
+
 
 (*
  Finds all permutations which permutes list Idx1 to list Idx2
@@ -199,14 +268,17 @@ GetPermutations[Idx1_, Idx2_]:=(*GetPermutations[Idx1, Idx2]=*)Block[{sIdx1, sId
     {}]
 ];
 
+
+
 (* ::Subsection:: *)
 (*Integral*)
+
 
 (*
  Inegral for given indices - see \cite[Eqn. 11]{collins06integration}
 *)
 IntegrateUnitaryHaarIndices[{I1_,J1_,I2_,J2_}, dim_?PositiveIntegerQ]:=(
-If[Sort[I1] == Sort[I2] && Sort[J1] == Sort[J2] && Length[I1]==Length[J1], 
+If[Sort[I1] == Sort[I2] && Sort[J1] == Sort[J2] && Length[I1]==Length[J1] && Length[I1]>0, 
  Unprotect[IntegrateUnitaryHaarIndices];
  IntegrateUnitaryHaarIndices[{I1,J1,I2,J2}, dim]=
  Block[{pIinv,pJ,s, int, perm, type},
@@ -263,7 +335,7 @@ If[DEBUG, Print["OPT 3"];];
                         (*temp functions*)
                         JoinAndMultiply[x_,y_]:={Sort[Join[x[[1]],y[[1]]],Greater], x[[2]]*y[[2]]};
 	                    JoinAndMultiply[x_,y_,z__]:=JoinAndMultiply[JoinAndMultiply[x,y],z];
-	                    PartitionsWithConjSize[n_]:=Block[{ip}, ip=IntegerPartitions[n]; Map[{#,kLambda[#]}&,ip]];
+	                    PartitionsWithConjSize[n_]:=Block[{ip}, ip=IntegerPartitions[n]; Map[{#,CardinalityConjugacyClassPartition[#]}&,ip]];
 	                    (*end temp functions*)
 	                    tI=Tally[I1];
 	                    partitions=Map[PartitionsWithConjSize,(tI\[Transpose][[2]])];
@@ -273,7 +345,27 @@ If[DEBUG, Print["OPT 3"];];
                     ];
                 ];
             ];
-        ];       
+        ];
+        If[int === Null && (I1 == I2 == J1) && (And @@ (Unequal @@@ (Transpose[{I1, J2}]))),
+            Block[{t, z, test, tJ2, sigma, k, m},
+                t = Tally[I1];               
+                z = Transpose[t][[2]];
+                If[(And @@ Map[Equal[#, z[[1]]] &, z]),
+                    test = True;
+                    Do[test = test && (If[I1[[k]] == I1[[l]], J2[[k]] == J2[[l]], True]); If[Not[test], Break[]], {k, 1, Length[I1]}, {l, 1, Length[I1]}];
+                    If[test,
+                    	tJ2 = Tally[J2];
+                    	sigma = tJ2\[Transpose][[1]];
+                    	If[Length[PermutationTypePartition[sigma]] == 1,
+                    		k = z[[1]];
+                    		m = Length[z];
+If[DEBUG, Print["OPT 4"];];                    		
+                    		int = (k!)^(2 m - 1) Total[(CardinalityConjugacyClassPartition[#]*Weingarten[m*#, dim] & /@ IntegerPartitions[k])];
+                        ];
+                    ];
+                ];
+            ];
+        ]; 
         (*
         ... 
         *)
@@ -419,9 +511,9 @@ IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{integrandExpanded,
 SetAttributes[IntU,Listable];
 
 
-
 (* ::Section::Closed:: *)
 (*Package footer*)
+
 
 Print["Package IntU version ", IntU`Private`intuVersion, " (last modification: ", IntU`Private`intuLastModification, ")."];
 
