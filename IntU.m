@@ -11,9 +11,11 @@ Func[text_?StringQ]:= "\!\(\*StyleBox[\""<>text<>"\", \"Input\"]\)"
 Func[a_,b__]:=Func[a]<>","<>Func[b]
 *)
 
-DOIToString[text_,doi_]:="\!\(\*ButtonBox[StyleBox[\""<>text<>"\", \"SR\"],Active->True,BaseStyle->\"Link\",ButtonData->\"http://dx.doi.org/"<>doi<>"\"]\)";
-citeCollins06 = DOIToString["[Collins&\:015aniady 2006]","10.1007/s00220-006-1554-3"];
-citeBernstein04 = DOIToString["[Bernstein 2004]","10.1016/j.jsc.2003.11.001"];
+
+
+IntUDOIToString[text_,doi_]:="\!\(\*ButtonBox[StyleBox[\""<>text<>"\", \"SR\"],Active->True,BaseStyle->\"Link\",ButtonData->\"http://dx.doi.org/"<>doi<>"\"]\)";
+IntUciteCollins06 = IntUDOIToString["[Collins&\:015aniady 2006]","10.1007/s00220-006-1554-3"];
+IntUciteBernstein04 = IntUDOIToString["[Bernstein 2004]","10.1016/j.jsc.2003.11.001"];
 IntUDocumentationReaplcements = {"<v>" -> "\!\(\*StyleBox[\"" , "</v>" -> "\", \"TI\"]\)", "<f>"->"\!\(\*StyleBox[\"", "</f>" -> "\", \"Input\"]\)"} 
 
 
@@ -24,10 +26,10 @@ IntUDocumentationReaplcements = {"<v>" -> "\!\(\*StyleBox[\"" , "</v>" -> "\", \
 
 IntegrateUnitaryHaar::usage = StringReplace[
 "<f>IntegrateUnitaryHaar</f>[<v>integrand</v>,{<v>var</v>,<v>dim</v>}] \
-gives the definite integral on unitary group with respect to Haar, accepting the following arguments: 
--<v>integrand</v> - polynomial type expression of variable <v>var</v> with indices placed as subscripts, \
+gives the definite integral on unitary group with respect to the Haar measure, accepting the following arguments: 
+-<v>integrand</v> - the polynomial type expression of variable <v>var</v> with indices placed as subscripts, \
 can contain any other symbolic expression of other variables,
--<v>var</v> - symbol of variable for integration,   
+-<v>var</v> - the symbol of variable for integration,   
 -<v>dim</v> - the dimension of a unitary group, must be a positive integer.
 <f>IntegrateUnitaryHaar</f>[<v>f</v>,{<v>u</v>,<v>d1</v>},{<v>v</v>,<v>d2</v>} ...] \
 gives multiple integral."
@@ -35,13 +37,13 @@ gives multiple integral."
 
 IntegrateUnitaryHaarIndices::usage = StringReplace[
 "<f>IntegrateUnitaryHaarIndices</f>{<v>I1</v>,<v>J1</v>,<v>I2</v>,<v>J2</v>},<v>dim</v>] \
-gives an the definite integral on unitary group with respect to Haar for given indices. see "<>citeCollins06<>"."
+gives a definite integral on unitary group with respect to the Haar measure for given indices. see "<>IntUciteCollins06<>"."
 ,IntUDocumentationReaplcements]
 
 Weingarten::usage = StringReplace[
 "<f>Weingarten</f>[<v>type</v>,<v>dim</v>] - returns the value of <v>Weingarten</v> function defined in \
-"<>citeCollins06<>" accepts the following arguments
--<v>type</v> - an integer partition which corresponds to cycle type of permutation,
+"<>IntUciteCollins06<>" and accepts the following arguments:
+-<v>type</v> - an integer partition which corresponds to the cycle type of permutation,
 -<v>dim</v> - the dimension of a unitary group, must be a positive integer."
 ,IntUDocumentationReaplcements]
 
@@ -52,11 +54,11 @@ Parameter <v>type</v> is optional. The default value is set to a trivial \
 partition and in this case the function returns the dimension of the irreducible \
 representation of symmetric group indexed by <v>part</v>,
 If <v>type</v> is specified the value of the character is calculated by Murnaghan-Nakayama rule using \
-<v>MNInner</v> algorithm provided in "<>citeBernstein04<>"." 
+<v>MNInner</v> algorithm provided in "<>IntUciteBernstein04<>"." 
 ,IntUDocumentationReaplcements]
 
 SchurPolynomialAt1::usage = StringReplace[ 
-"<f>SchurPolynomialAt1</f>[<v>part</v>,<v>dim</v>] - returns the value of Schur polynomial \!\(\*SubscriptBox[\(s\), \(<v>part</v>\)]\) \
+"<f>SchurPolynomialAt1</f>[<v>part</v>,<v>dim</v>] - returns the value of the Schur polynomial \!\(\*SubscriptBox[\(s\), \(<v>part</v>\)]\) \
 at <v>d</v>-dimensional point (1,1,...,1), i.e. the dimension of irreducible representation of <v>U</v>(<v>dim</v>) corresponding to <v>part</v>."
 ,IntUDocumentationReaplcements]
 
@@ -73,7 +75,7 @@ the value of multinomial Beta function defined as \
    
 CardinalityConjugacyClassPartition::usage = StringReplace[
 "<f>CardinalityConjugacyClassPartition</f>[<v>part</v>] - gives a cardinality of conjugacy class for \
-permutation with cycle type given by partition <v>part</v>." 
+permutation with the cycle type given by a partition <v>part</v>." 
 ,IntUDocumentationReaplcements]
 
 
@@ -110,7 +112,8 @@ intuHistory = {
     {"0.1.22", "12/08/2011", "Zbyszek", "Weingarten changed and other stuff"},
     {"0.1.23", "24/08/2011", "Zbyszek", "New optimization and some clean up"},
     {"0.1.24", "26/08/2011", "Zbyszek", "Main function changed - now multiple integrals can be calculated"},
-    {"0.1.25", "14/09/2011", "Zbyszek", "Documentation improved"}
+    {"0.1.25", "14/09/2011", "Zbyszek", "Documentation improved"},
+    {"0.2.0", "19/09/2011", "Zbyszek & Jarek", "Documentation corrected"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
