@@ -113,7 +113,8 @@ intuHistory = {
     {"0.1.23", "24/08/2011", "Zbyszek", "New optimization and some clean up"},
     {"0.1.24", "26/08/2011", "Zbyszek", "Main function changed - now multiple integrals can be calculated"},
     {"0.1.25", "14/09/2011", "Zbyszek", "Documentation improved"},
-    {"0.2.0", "19/09/2011", "Zbyszek & Jarek", "Documentation corrected"}
+    {"0.2.0", "19/09/2011", "Zbyszek & Jarek", "Documentation corrected"},
+    {"0.2.1", "03/10/2011", "Zbyszek", "Small error concerning conjugate simplification corrected"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
@@ -489,6 +490,7 @@ IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{integrandExpanded,
     (*Print[StringJoin["Optimalization = ", ToString[OPT]] ];*)
    	If[Not[FreeQ[integrand,variable]],
         integrandExpanded = ExpandAll[integrand];
+        integrandExpanded = integrandExpanded /. Conjugate[x_]^(p_) :> Conjugate[ExpandAll[x^p]];
         expList =(Flatten[{integrandExpanded}//.a_+b_->{a,b}]);
         expList = expList/.Abs[x_]^k_?EvenQ-> x^(k/2)*Conjugate[x]^(k/2);
         expList = expList//.Conjugate[x_*y_]-> Conjugate[x]*Conjugate[y];
