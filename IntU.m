@@ -490,6 +490,7 @@ IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{integrandExpanded,
     (*Print[StringJoin["Optimalization = ", ToString[OPT]] ];*)
    	If[Not[FreeQ[integrand,variable]],
         integrandExpanded = ExpandAll[integrand];
+        integrandExpanded = integrandExpanded /. Abs[x_]^(p_?EvenQ) :> ExpandAll[ExpandAll[x^(p/2)]*Conjugate[ExpandAll[x^(p/2)]]];
         integrandExpanded = integrandExpanded /. Conjugate[x_]^(p_) :> Conjugate[ExpandAll[x^p]];
         expList =(Flatten[{integrandExpanded}//.a_+b_->{a,b}]);
         expList = expList/.Abs[x_]^k_?EvenQ-> x^(k/2)*Conjugate[x]^(k/2);
