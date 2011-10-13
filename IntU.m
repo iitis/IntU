@@ -114,7 +114,8 @@ intuHistory = {
     {"0.1.24", "26/08/2011", "Zbyszek", "Main function changed - now multiple integrals can be calculated"},
     {"0.1.25", "14/09/2011", "Zbyszek", "Documentation improved"},
     {"0.2.0", "19/09/2011", "Zbyszek & Jarek", "Documentation corrected"},
-    {"0.2.1", "03/10/2011", "Zbyszek", "Small error concerning conjugate simplification corrected"}
+    {"0.2.1", "03/10/2011", "Zbyszek", "Small error concerning conjugate simplification corrected"},
+    {"0.2.2", "04/10/2011", "Zbyszek", "Small error concerning paterns matching"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
@@ -486,13 +487,14 @@ IntegrateUnitaryHaar[integrand_, list__] := Fold[ IntU[#1,#2[[1]],#2[[2]]]& , in
 (*
  Main function which performs integration
 *)
-IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{integrandExpanded,f,g,expList,tempVar,NPI,isPoly,currVar,restVar},	
+IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{freeFromVariable,integrandExpanded,f,g,expList,tempVar,NPI,isPoly,currVar,restVar},	
     (*Print[StringJoin["Optimalization = ", ToString[OPT]] ];*)
+    freeFromVariable[a_, b_] := If[FreeQ[a, variable] || FreeQ[b, variable], a + b, {a, b}];
    	If[Not[FreeQ[integrand,variable]],
         integrandExpanded = ExpandAll[integrand];
         integrandExpanded = integrandExpanded /. Abs[x_]^(p_?EvenQ) :> ExpandAll[ExpandAll[x^(p/2)]*Conjugate[ExpandAll[x^(p/2)]]];
         integrandExpanded = integrandExpanded /. Conjugate[x_]^(p_) :> Conjugate[ExpandAll[x^p]];
-        expList =(Flatten[{integrandExpanded}//.a_+b_->{a,b}]);
+        expList =(Flatten[{integrandExpanded}//.a_+b_:>freeFromVariable[a,b]]);
         expList = expList/.Abs[x_]^k_?EvenQ-> x^(k/2)*Conjugate[x]^(k/2);
         expList = expList//.Conjugate[x_*y_]-> Conjugate[x]*Conjugate[y];
         f=Function[{x,var},Block[{const},( const= x/.{Subscript[var, p_,q_]-> 1};{const*IntegrateUnitaryHaarIndices[IndexExtractor[x/.const-> 1],dim]})]];
