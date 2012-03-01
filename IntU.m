@@ -115,7 +115,8 @@ intuHistory = {
     {"0.1.25", "14/09/2011", "Zbyszek", "Documentation improved"},
     {"0.2.0", "19/09/2011", "Zbyszek & Jarek", "Documentation corrected"},
     {"0.2.1", "03/10/2011", "Zbyszek", "Small error concerning conjugate simplification corrected"},
-    {"0.2.2", "04/10/2011", "Zbyszek", "Small error concerning paterns matching"}
+    {"0.2.2", "04/10/2011", "Zbyszek", "Small error concerning paterns matching"},
+    {"0.2.3", "15/01/2012", "Zbyszek", "Some code changes"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
