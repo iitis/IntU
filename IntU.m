@@ -116,7 +116,8 @@ intuHistory = {
     {"0.2.0", "19/09/2011", "Zbyszek & Jarek", "Documentation corrected"},
     {"0.2.1", "03/10/2011", "Zbyszek", "Small error concerning conjugate simplification corrected"},
     {"0.2.2", "04/10/2011", "Zbyszek", "Small error concerning paterns matching"},
-    {"0.2.3", "15/01/2012", "Zbyszek", "Some code changes"}
+    {"0.2.3", "15/01/2012", "Zbyszek", "Some code changes"},
+    {"0.3.0", "26/02/2014", "Zbyszek", "Some bugs fixed"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
@@ -427,11 +428,18 @@ If[DEBUG, Print["OPT 4"];];
 (*
  Extracts indices from expresion w and puts them into 4 lists I1,J1,I2,J2 see \cite[Eqn. 11]{collins06integration}.
 *)
-IndexExtractor[w_]:=Block[{fw,con,ccon, rest, I1, I2, J1,J2},    	
+IndexExtractor[w_]:=Block[{fw,con,ccon, rest, I1, I2, J1,J2}, 
+
     fw=(Flatten[{w}//.{a_*b_-> {a,b},Conjugate[a_*b_]->{Conjugate[a],Conjugate[b]},Conjugate[a_^k_]:> ConstantArray[Conjugate[a],k],a_^k_ :>  ConstantArray[a,k]}]); 
     con = Select[fw,Head[#]===Conjugate &];  
     ccon=Conjugate[con]; 
     rest=Select[fw,Head[#]=!=Conjugate &];
+
+(*    fw=(Flatten[{w}//.{a_*b_-> {a,b},CON[a_*b_]->{CON[a],CON[b]},CON[a_^k_]:> ConstantArray[CON[a],k],a_^k_ :>  ConstantArray[a,k]}]); 
+    con = Select[fw,Head[#]===CON &];  
+    ccon=CON[con]; 
+    rest=Select[fw,Head[#]=!=CON &];
+*)
     I1={};I2={};J1={};J2={};
     If[Length[rest]==Length[con],
         (AppendTo[I1,#[[2]]];AppendTo[J1,#[[3]]];)& /@ rest;
@@ -488,35 +496,85 @@ IntegrateUnitaryHaar[integrand_, list__] := Fold[ IntU[#1,#2[[1]],#2[[2]]]& , in
 (*
  Main function which performs integration
 *)
-IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{freeFromVariable,integrandExpanded,f,g,expList,tempVar,NPI,isPoly,currVar,restVar},	
+
+IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{freeFromVariable,integrandExpanded,f,g,expList,tempVar,NPI,isPoly,currVar,restVar,CON},	
     (*Print[StringJoin["Optimalization = ", ToString[OPT]] ];*)
     freeFromVariable[a_, b_] := If[FreeQ[a, variable] || FreeQ[b, variable], a + b, {a, b}];
+    (*freeFromVariable[a_, b_] := If[False (*FreeQ[a, variable] || FreeQ[b, variable]*), a + b, {a, b}];*)
+
    	If[Not[FreeQ[integrand,variable]],
         integrandExpanded = ExpandAll[integrand];
-        integrandExpanded = integrandExpanded /. Abs[x_]^(p_?EvenQ) :> ExpandAll[ExpandAll[x^(p/2)]*Conjugate[ExpandAll[x^(p/2)]]];
-        integrandExpanded = integrandExpanded /. Conjugate[x_]^(p_) :> Conjugate[ExpandAll[x^p]];
+        
+	(*
+	integrandExpanded = integrandExpanded //. Abs[x_]^(p_?EvenQ) :> ExpandAll[ExpandAll[x^(p/2)]*Conjugate[(ExpandAll[x^(p/2)])]];
+        integrandExpanded = integrandExpanded //. Conjugate[x_]^(p_) :> Conjugate[ExpandAll[x^p]];
+        integrandExpanded = ExpandAll[integrandExpanded //. { Conjugate[x_ + y_] :> Conjugate[x] + Conjugate[y], Conjugate[x_*y_] :> Conjugate[x]*Conjugate[y]}];
+        *)
+        
+	(*
+	integrandExpanded = ExpandAll[integrandExpanded //. {Abs[x_]^(p_?EvenQ) :> ExpandAll[ExpandAll[x^(p/2)]*Conjugate[ExpandAll[x^(p/2)]]],
+			      Conjugate[x_]^(p_) :> Conjugate[ExpandAll[x^p]],
+			      Conjugate[x_ + y_] :> Conjugate[x] + Conjugate[y], Conjugate[x_*y_] :> Conjugate[x]*Conjugate[y]}];
+	*)
+		
+	integrandExpanded = ExpandAll[integrandExpanded //. {Abs[x_]^(p_?EvenQ) :> ExpandAll[ExpandAll[x^(p/2)]*CON[ExpandAll[x^(p/2)]]],
+			      Conjugate[x_]^(p_) :> CON[ExpandAll[x^p]],
+			      Conjugate[x_ + y_] :> CON[x] + CON[y], CON[x_*y_] :> CON[x]*CON[y],
+			      Conjugate[x_]:>CON[x]}];
+	integrandExpanded = ExpandAll[integrandExpanded //. {CON[x_]^(p_) :> CON[ExpandAll[x^p]],
+			      CON[x_ + y_] :> CON[x] + CON[y], CON[x_*y_] :> CON[x]*CON[y]}];
+	
+	integrandExpanded = integrandExpanded/.CON[x_]->Conjugate[x];
+		
+	
+	If[Head[integrandExpanded] === Plus,
+	  expList= List@@integrandExpanded;,
+	  expList= {integrandExpanded};
+	];
+	expList = expList/.Conjugate[x_*y_]-> Conjugate[x]*Conjugate[y];
+        
+        
+        (*
         expList =(Flatten[{integrandExpanded}//.a_+b_:>freeFromVariable[a,b]]);
-        expList = expList/.Abs[x_]^k_?EvenQ-> x^(k/2)*Conjugate[x]^(k/2);
-        expList = expList//.Conjugate[x_*y_]-> Conjugate[x]*Conjugate[y];
-        f=Function[{x,var},Block[{const},( const= x/.{Subscript[var, p_,q_]-> 1};{const*IntegrateUnitaryHaarIndices[IndexExtractor[x/.const-> 1],dim]})]];
-        g=Function[{x,var}, Block[{},    
-            If[x =!= 0,       
-            isPoly = ((x/.Subscript[var, __]^k_?NotPositiveIntegerQ-> NPI)/.NPI->0)=!=0;      
-            isPoly = And[isPoly,PolynomialQ[x /.{Subscript[var, __]-> tempVar, Conjugate[Subscript[var, __]]-> tempVar },tempVar]];
-            (* Miejsce do optymalizacji*)  
-            l=  {};
-            x/.Subscript[var, i_,j_]:> (AppendTo[l,{i,j}];) ;
-            ul=Union[l];
-            If[isPoly, Do[isPoly = isPoly && PolynomialQ[x/.{Subscript[var, ul[[i]][[1]],ul[[i]][[2]]]->currVar,Subscript[var, __]-> restVar},{currVar,Conjugate[currVar]}]; If[!test,Break[]],{i,1,Length[ul]}]];     
-            If[isPoly,           
-                f[x,var]
-            , (*else*)       
-                HoldForm[IntegrateUnitaryHaar[x,var,dim]]
-            ]
-            ,(*else*)
-            0
-            ]
-           ]
+        expList = expList/.Abs[x_]^k_?EvenQ-> x^(k/2)*Conjugate[(x^(k/2))];
+        expList = expList/.Conjugate[x_*y_]-> Conjugate[x]*Conjugate[y];
+        *)
+                
+	(*
+        f=Function[{x,var},Block[{const},( const= x/.{Subscript[var, p_,q_]-> 1};{
+	    const*IntegrateUnitaryHaarIndices[IndexExtractor[x/.const-> 1],dim]
+	    })]];
+	*)
+        
+        f=Function[{x,var},Block[{const,y},( const= x/.{Subscript[var, p_,q_]-> 1};{
+	      y=x/const;
+	      If[const===0,0, const*IntegrateUnitaryHaarIndices[IndexExtractor[y],dim]]
+	  })]];
+        
+        g=Function[{x,var}, Block[{},
+	    If[FreeQ[x,variable], 
+	      x,
+	      (*else*)
+	      If[x =!= 0,       
+		isPoly = True;
+		isPoly = ((x/.Subscript[var, __]^k_?NotPositiveIntegerQ-> NPI)/.NPI->0)=!=0;      
+		isPoly = And[isPoly,PolynomialQ[x /.{Subscript[var, __]-> tempVar, Conjugate[Subscript[var, __]]-> tempVar },tempVar]];
+		
+		(* Miejsce do optymalizacji*)  
+		l=  {};
+		x/.Subscript[var, i_,j_]:> (AppendTo[l,{i,j}];) ;
+		ul=Union[l];
+		If[isPoly, Do[isPoly = isPoly && PolynomialQ[x/.{Subscript[var, ul[[i]][[1]],ul[[i]][[2]]]->currVar,Subscript[var, __]-> restVar},{currVar,Conjugate[currVar]}]; If[!test,Break[]],{i,1,Length[ul]}]];     
+		If[isPoly,           
+		    f[x,var]
+		, (*else*)       
+		  HoldForm[IntegrateUnitaryHaar[x,{var,dim}]]
+		]
+	      ,(*else*)
+	      0
+	      ]
+	    ]
+	    ]
         ];
         Total[Flatten[ g[#,variable]&/@expList]]
     ,(*else*)
