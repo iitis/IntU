@@ -24,10 +24,10 @@ described in
 
 Z.Puchała, J.A. Miszczak, *Symbolic integration with respect to the Haar measure on the unitary group*, Bull. Pol. Acad. Sci.-Tech. Sci., Vol 65, No. 1 (2017), DOI:[10.1515/bpasts-2017-0003](https://doi.org/10.1515/bpasts-2017-0003), arXiv:[1109.4244](https://arxiv.org/abs/1109.4244)
 
-In case of citing our work, please use the following BibTeX form:
+In case of citing our work, please use the following BibTeX data:
 
 ```tex
-@article{puchala2017symboli,
+@article{puchala2017symbolic,
   author        = {Pucha{\l}a, Zbignoew and Miszczak, Jaros{\l}aw Adam},
   title         = {Symbolic integration with respect to the {Haar} measure on the unitary group},
   journal       = {Bull. Pol. Acad. Sci.-Tech. Sci.},
