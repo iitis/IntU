@@ -8,6 +8,8 @@ measure.
 
 ## Installation
 
+The package can be installed by placing `IntU.m` file in `Applications`
+subdirectory of `.Mathematica` directory.
 
 ## Documentation
 
