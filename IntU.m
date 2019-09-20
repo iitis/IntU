@@ -117,7 +117,8 @@ intuHistory = {
     {"0.2.1", "03/10/2011", "Zbyszek", "Small error concerning conjugate simplification corrected"},
     {"0.2.2", "04/10/2011", "Zbyszek", "Small error concerning paterns matching"},
     {"0.2.3", "15/01/2012", "Zbyszek", "Some code changes"},
-    {"0.3.0", "26/02/2014", "Zbyszek", "Some bugs fixed"}
+    {"0.3.0", "26/02/2014", "Zbyszek", "Some bugs fixed"},
+    {"0.3.1", "19/08/2015", "Zbyszek", "Optimization No. 3 causes a bug, for now it is off"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
@@ -337,8 +338,8 @@ If[DEBUG, Print["OPT 2"];];
             ];
         ];  (*end Block*)
         ];  (*end if int === Null*)
-        (*new optimization *)   
-        If[int === Null && I1==I2 && J1==J2 && Length[I1]>1,
+        (*new optimization: this optimization is off because it couses a bug *)   
+        If[False && int === Null && I1==I2 && J1==J2 && Length[I1]>1,
            Block[{test,tI},
                 test = True;
                 Do[test = test&& (If[I1[[k]]==I1[[l]],J1[[k]]==J1[[l]],True]);If[Not[test],Break[]],{k,1,Length[I1]},{l,1,Length[I1]}];
