@@ -16,6 +16,10 @@ subdirectory of `.Mathematica` directory.
 Help messages for the implemented functions are document in `IntU_functions.nb`
 notebook. The are also available in the PDF format in `IntU_functions.pdf`.
 
+## Authors
+
+[Z. Puchała](https://iitis.pl/en/person/zpuchala),
+[J.A. Miszczak](https://miszczak.eu), IITiS PAN Gliwice, Poland
 
 ## Usage and citing
 
@@ -28,7 +32,7 @@ In case of citing our work, please use the following BibTeX data:
 
 ```tex
 @article{puchala2017symbolic,
-  author        = {Pucha{\l}a, Zbignoew and Miszczak, Jaros{\l}aw Adam},
+  author        = {Pucha{\l}a, Zbigniew and Miszczak, Jaros{\l}aw Adam},
   title         = {Symbolic integration with respect to the {Haar} measure on the unitary group},
   journal       = {Bull. Pol. Acad. Sci.-Tech. Sci.},
   volume        = {65},
