@@ -30,7 +30,7 @@ gives the definite integral on unitary group with respect to the Haar measure, a
 -<v>integrand</v> - the polynomial type expression of variable <v>var</v> with indices placed as subscripts, \
 can contain any other symbolic expression of other variables,
 -<v>var</v> - the symbol of variable for integration,   
--<v>dim</v> - the dimension of a unitary group, must be a positive integer.
+-<v>dim</v> - the dimension of a unitary group (positive integer or symbolic).
 <f>IntegrateUnitaryHaar</f>[<v>f</v>,{<v>u</v>,<v>d1</v>},{<v>v</v>,<v>d2</v>} ...] \
 gives multiple integral."
 ,IntUDocumentationReaplcements]
@@ -44,7 +44,7 @@ Weingarten::usage = StringReplace[
 "<f>Weingarten</f>[<v>type</v>,<v>dim</v>] - returns the value of <v>Weingarten</v> function defined in \
 "<>IntUciteCollins06<>" and accepts the following arguments:
 -<v>type</v> - an integer partition which corresponds to the cycle type of permutation,
--<v>dim</v> - the dimension of a unitary group, must be a positive integer."
+-<v>dim</v> - the dimension of a unitary group (positive integer or symbolic)."
 ,IntUDocumentationReaplcements]
 
 CharacterSymmetricGroup::usage =  StringReplace[
@@ -118,7 +118,8 @@ intuHistory = {
     {"0.2.2", "04/10/2011", "Zbyszek", "Small error concerning paterns matching"},
     {"0.2.3", "15/01/2012", "Zbyszek", "Some code changes"},
     {"0.3.0", "26/02/2014", "Zbyszek", "Some bugs fixed"},
-    {"0.3.1", "19/08/2015", "Zbyszek", "Optimization No. 3 causes a bug, for now it is off"}
+    {"0.3.1", "19/08/2015", "Zbyszek", "Optimization No. 3 causes a bug, for now it is off"},
+    {"0.4.0", "05/03/2026", "Backport from IntU.jl", "Symbolic dimension support: dim can now be a symbol, all results are rational functions of dim"}
 };
 intuVersion = Last[intuHistory][[1]];
 intuLastModification = Last[intuHistory][[2]];
@@ -169,13 +170,18 @@ BinaryPartition[partition_]:=Block[{l={}},
 ];
 
 (* 
- From \cite[Proposition 4.62]{etingof2009introduction}
+ Hook-Content formula for the Schur polynomial at (1,...,1).
+ Works for both integer and symbolic dim.
+ See Stanley, Enumerative Combinatorics Vol. 2.
+ Equivalent to the Julia IntU.jl implementation (irrep_dimension).
 *)
-SchurPolynomialAt1[partt_,dim_]:=Block[{part,zeros},
-    zeros = ConstantArray[0, dim-Length[partt]];
-    part = Join[partt,zeros];
+SchurPolynomialAt1[partt_, dim_] := Block[{conjPart},
+    conjPart = ConjugatePartition[partt];
     (*return*)
-    Product[(part[[i]] - part[[j]] + j - i)/(j - i),{j, 1, dim},{i, 1, j-1}]
+    Product[
+        (dim + j - i) / (partt[[i]] - j + conjPart[[j]] - i + 1),
+        {i, 1, Length[partt]}, {j, 1, partt[[i]]}
+    ]
 ];
 
 MultinomialBeta[a_]:=(Times@@(Gamma/@a))/(Gamma[Total[a]]);
@@ -236,16 +242,20 @@ CharacterSymmetricGroup[partition_, type_:"id"]:= If[type==="id", CharacterAtId[
 (*
  Function from \cite{collins06integration}
 *)
-Weingarten[permutationType_,d__?PositiveIntegerQ]:=(
+Weingarten[permutationType_, d_] := (
  Unprotect[Weingarten];
- Weingarten[permutationType,d]=Block[{func,n},    
-    func = (CharacterSymmetricGroup[#])^2 CharacterSymmetricGroup[#,permutationType]/SchurPolynomialAt1[#,d]& ;
-    n=Total[permutationType];
-    1/(n!)^2 Fold[#1 + func[#2] &, 0, IntegerPartitions[n,d]]    
-    ]; 
+ Weingarten[permutationType, d] = Block[{func, n},
+    func = (CharacterSymmetricGroup[#])^2 CharacterSymmetricGroup[#, permutationType] / SchurPolynomialAt1[#, d] &;
+    n = Total[permutationType];
+    (* Sum over all partitions of n. For integer d, partitions with
+       Length > d contribute zero via SchurPolynomialAt1 (the numerator
+       contains factors (d + j - i) that vanish). For symbolic d, this
+       yields the full rational function. *)
+    1/(n!)^2 Fold[#1 + func[#2] &, 0, IntegerPartitions[n]]
+    ];
  Protect[Weingarten];
- (*return*) 
- Weingarten[permutationType,d] 
+ (*return*)
+ Weingarten[permutationType, d]
 )
 
 
@@ -291,7 +301,7 @@ GetPermutations[Idx1_, Idx2_]:=(*GetPermutations[Idx1, Idx2]=*)Block[{sIdx1, sId
 (*
  Inegral for given indices - see \cite[Eqn. 11]{collins06integration}
 *)
-IntegrateUnitaryHaarIndices[{I1_,J1_,I2_,J2_}, dim_?PositiveIntegerQ]:=(
+IntegrateUnitaryHaarIndices[{I1_,J1_,I2_,J2_}, dim_]:=(
 If[Sort[I1] == Sort[I2] && Sort[J1] == Sort[J2] && Length[I1]==Length[J1] && Length[I1]>0, 
  Unprotect[IntegrateUnitaryHaarIndices];
  IntegrateUnitaryHaarIndices[{I1,J1,I2,J2}, dim]=
@@ -314,7 +324,8 @@ If[DEBUG, Print["OPT 1"];];
         (* 
           Optimalization using fact that column of Haar distributed matrix has Uniform distribution on a simplex, see \cite[Chapter 4]{hiai2006semicircle}     
         *)
-        If[int === Null,
+        (* OPT 2: uses ConstantArray[0, dim - ...] which requires integer dim *)
+        If[int === Null && IntegerQ[dim],
         Block[{tallyI1, tallyI2, tallyJ1, tallyJ2,ks},
             tallyI1 = Tally[I1]; tallyI2 = Tally[I2]; tallyJ1 = Tally[J1]; tallyJ2 = Tally[J2];        
             If[Length[tallyI1]==1 && Length[tallyI2]==1,    
@@ -360,7 +371,8 @@ If[DEBUG, Print["OPT 3"];];
                 ];
             ];
         ];
-        If[int === Null && (I1 == I2 == J1) && (And @@ (Unequal @@@ (Transpose[{I1, J2}]))),
+        (* OPT 4: uses PermutationTypePartition which requires integer indices *)
+        If[int === Null && IntegerQ[dim] && (I1 == I2 == J1) && (And @@ (Unequal @@@ (Transpose[{I1, J2}]))),
             Block[{t, z, test, tJ2, sigma, k, m},
                 t = Tally[I1];               
                 z = Transpose[t][[2]];
@@ -498,7 +510,7 @@ IntegrateUnitaryHaar[integrand_, list__] := Fold[ IntU[#1,#2[[1]],#2[[2]]]& , in
  Main function which performs integration
 *)
 
-IntU[integrand_, variable_, dim_?PositiveIntegerQ ] := Block[{freeFromVariable,integrandExpanded,f,g,expList,tempVar,NPI,isPoly,currVar,restVar,CON},	
+IntU[integrand_, variable_, dim_ ] := Block[{freeFromVariable,integrandExpanded,f,g,expList,tempVar,NPI,isPoly,currVar,restVar,CON},	
     (*Print[StringJoin["Optimalization = ", ToString[OPT]] ];*)
     freeFromVariable[a_, b_] := If[FreeQ[a, variable] || FreeQ[b, variable], a + b, {a, b}];
     (*freeFromVariable[a_, b_] := If[False (*FreeQ[a, variable] || FreeQ[b, variable]*), a + b, {a, b}];*)
